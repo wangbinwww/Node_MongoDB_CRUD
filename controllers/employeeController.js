@@ -5,14 +5,14 @@ const Employee = mongoose.model('Employee');
 
 router.get('/', (req, res) => {
     res.render("employee/addOrEdit", {
-        viewTitle: "Insert Employee"
+        viewTitle: "用户建立表单"
     });
 });
 
 router.post('/', (req, res) => {
     if (req.body._id == '')
         insertRecord(req, res);
-        else
+    else
         updateRecord(req, res);
 });
 
@@ -33,25 +33,28 @@ function insertRecord(req, res) {
                     viewTitle: "Insert Employee",
                     employee: req.body
                 });
-            }
-            else
+            } else
                 console.log('Error during record insertion : ' + err);
         }
     });
 }
 
 function updateRecord(req, res) {
-    Employee.findOneAndUpdate({ _id: req.body._id }, req.body, { new: true }, (err, doc) => {
-        if (!err) { res.redirect('employee/list'); }
-        else {
+    Employee.findOneAndUpdate({
+        _id: req.body._id
+    }, req.body, {
+        new: true
+    }, (err, doc) => {
+        if (!err) {
+            res.redirect('employee/list');
+        } else {
             if (err.name == 'ValidationError') {
                 handleValidationError(err, req.body);
                 res.render("employee/addOrEdit", {
                     viewTitle: 'Update Employee',
                     employee: req.body
                 });
-            }
-            else
+            } else
                 console.log('Error during record update : ' + err);
         }
     });
@@ -64,8 +67,7 @@ router.get('/list', (req, res) => {
             res.render("employee/list", {
                 list: docs
             });
-        }
-        else {
+        } else {
             console.log('Error in retrieving employee list :' + err);
         }
     });
@@ -102,8 +104,9 @@ router.get('/delete/:id', (req, res) => {
     Employee.findByIdAndRemove(req.params.id, (err, doc) => {
         if (!err) {
             res.redirect('/employee/list');
+        } else {
+            console.log('Error in employee delete :' + err);
         }
-        else { console.log('Error in employee delete :' + err); }
     });
 });
 
